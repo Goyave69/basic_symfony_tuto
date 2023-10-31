@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -11,19 +12,29 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['book:read', 'book:write'])]
     private int $id;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['book:read', 'book:write'])]
     private string $name;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['book:read', 'book:write'])]
     private string $description;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['book:read', 'book:write'])]
     private string $ibn;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['book:read', 'book:write'])]
     private string $author;
+
+    #[ORM\ManyToOne(inversedBy: 'book')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['book:read', 'book:write'])]
+    private ?Category $category = null;
 
     /**
      * @return int
@@ -112,6 +123,18 @@ class Book
     public function setAuthor(string $author): Book
     {
         $this->author = $author;
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+
         return $this;
     }
 
